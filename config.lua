@@ -7,6 +7,15 @@ vim.opt.shiftwidth = 4
 vim.opt.tabstop = 4
 vim.opt.relativenumber = true
 
+-- folding powered by treesitter
+-- https://github.com/nvim-treesitter/nvim-treesitter#folding
+-- look for foldenable: https://github.com/neovim/neovim/blob/master/src/nvim/options.lua
+-- Vim cheatsheet, look for folds keys: https://devhints.io/vim
+vim.opt.foldmethod = "expr"                     -- default is "normal"
+vim.opt.foldexpr = "nvim_treesitter#foldexpr()" -- default is ""
+vim.opt.foldenable = false                      -- if this option is true and fold method option is other than normal, every time a document is opened everything will be folded.
+
+
 -- general
 lvim.log.level = "info"
 lvim.format_on_save = {
@@ -25,6 +34,7 @@ lvim.keys.normal_mode["<S-l>"] = ":BufferLineCycleNext<CR>"
 lvim.keys.normal_mode["<S-h>"] = ":BufferLineCyclePrev<CR>"
 lvim.keys.normal_mode["<C-/>"] = "<Plug>(comment_toggle_linewise_current)"
 lvim.keys.visual_mode["<C-/>"] = "<Plug>(comment_toggle_linewise_visual)"
+lvim.keys.normal_mode["<leader>r"] = ":GoRun . -F -a testdata/test.dcm<CR>i"
 
 -- -- Use which-key to add extra bindings with the leader-key prefix
 -- lvim.builtin.which_key.mappings["W"] = { "<cmd>noautocmd w<cr>", "Save without formatting" }
@@ -154,7 +164,7 @@ lvim.plugins = {
             "nvim-lua/plenary.nvim",
             "nvim-treesitter/nvim-treesitter",
         },
-    }
+    },
 }
 
 -- below is a workaround that fixes this warning:
