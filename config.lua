@@ -1,27 +1,7 @@
---[[
- THESE ARE EXAMPLE CONFIGS FEEL FREE TO CHANGE TO WHATEVER YOU WANT
- `lvim` is the global options object
-]]
--- vim options
-vim.opt.shiftwidth = 4
-vim.opt.tabstop = 4
-vim.opt.relativenumber = true
-
--- folding powered by treesitter
--- https://github.com/nvim-treesitter/nvim-treesitter#folding
--- look for foldenable: https://github.com/neovim/neovim/blob/master/src/nvim/options.lua
--- Vim cheatsheet, look for folds keys: https://devhints.io/vim
-vim.opt.foldmethod = "expr"                     -- default is "normal"
-vim.opt.foldexpr = "nvim_treesitter#foldexpr()" -- default is ""
-vim.opt.foldenable = false                      -- if this option is true and fold method option is other than normal, every time a document is opened everything will be folded.
-
-
--- general
-lvim.log.level = "info"
-lvim.format_on_save = {
-    enabled = true,
-    pattern = "*.lua",
-    timeout = 1000,
+save = {
+  enabled = true,
+  pattern = "*.lua",
+  timeout = 1000,
 }
 -- to disable icons and use a minimalist setup, uncomment the following
 -- lvim.use_icons = false
@@ -34,14 +14,17 @@ lvim.keys.normal_mode["<S-l>"] = ":BufferLineCycleNext<CR>"
 lvim.keys.normal_mode["<S-h>"] = ":BufferLineCyclePrev<CR>"
 lvim.keys.normal_mode["<C-/>"] = "<Plug>(comment_toggle_linewise_current)"
 lvim.keys.visual_mode["<C-/>"] = "<Plug>(comment_toggle_linewise_visual)"
-lvim.keys.normal_mode["<leader>r"] = ":GoRun . -F -a testdata/test.dcm<CR>i"
+lvim.keys.normal_mode["<leader>r"] = ":GoRun . -F -a testdata2/<CR>i"
 
 -- -- Use which-key to add extra bindings with the leader-key prefix
 -- lvim.builtin.which_key.mappings["W"] = { "<cmd>noautocmd w<cr>", "Save without formatting" }
 -- lvim.builtin.which_key.mappings["P"] = { "<cmd>Telescope projects<CR>", "Projects" }
 
 -- -- Change theme settings
--- lvim.colorscheme = "lunar"
+lvim.colorscheme = "lunar"
+lvim.colorscheme = "tokyonight"
+
+
 
 lvim.format_on_save = true
 lvim.builtin.alpha.active = true
@@ -120,51 +103,54 @@ lvim.builtin.treesitter.auto_install = true
 
 -- -- Additional Plugins <https://www.lunarvim.org/docs/plugins#user-plugins>
 lvim.plugins = {
-    {
-        "zbirenbaum/copilot.lua",
-        cmd = "Copilot",
-        event = "InsertEnter",
-        config = function()
-            require("copilot").setup({
-                suggestion = { enabled = false },
-                panel = { enabled = false },
-            })
-        end,
+  {
+    "zbirenbaum/copilot.lua",
+    cmd = "Copilot",
+    event = "InsertEnter",
+    config = function()
+      require("copilot").setup({
+        suggestion = { enabled = false },
+        panel = { enabled = false },
+      })
+    end,
+  },
+  {
+    "zbirenbaum/copilot-cmp",
+    after = { "copilot.lua" },
+    config = function()
+      require("copilot_cmp").setup()
+    end
+  },
+  {
+    "okuuva/auto-save.nvim",
+    cmd = "ASToggle",                       -- optional for lazy loading on command
+    event = { "InsertLeave", "TextChanged" }, -- optional for lazy loading on trigger events
+    opts = {
+      -- your config goes here
+      -- or just leave it empty :)
     },
-    {
-        "zbirenbaum/copilot-cmp",
-        after = { "copilot.lua" },
-        config = function()
-            require("copilot_cmp").setup()
-        end
+  },
+  {
+    "ray-x/go.nvim",
+    dependencies = { -- optional packages
+      "ray-x/guihua.lua",
+      "neovim/nvim-lspconfig",
+      "nvim-treesitter/nvim-treesitter",
     },
-    {
-        "Pocco81/auto-save.nvim",
-        config = function()
-            require("auto-save").setup()
-        end,
+    config = function()
+      require("go").setup()
+    end,
+    event = { "CmdlineEnter" },
+    ft = { "go", 'gomod' },
+    build = ':lua require("go.install").update_all_sync()' -- if you need to install/update all binaries
+  },
+  {
+    "olexsmir/gopher.nvim",
+    dependencies = { -- dependencies
+      "nvim-lua/plenary.nvim",
+      "nvim-treesitter/nvim-treesitter",
     },
-    {
-        "ray-x/go.nvim",
-        dependencies = { -- optional packages
-            "ray-x/guihua.lua",
-            "neovim/nvim-lspconfig",
-            "nvim-treesitter/nvim-treesitter",
-        },
-        config = function()
-            require("go").setup()
-        end,
-        event = { "CmdlineEnter" },
-        ft = { "go", 'gomod' },
-        build = ':lua require("go.install").update_all_sync()' -- if you need to install/update all binaries
-    },
-    {
-        "olexsmir/gopher.nvim",
-        dependencies = { -- dependencies
-            "nvim-lua/plenary.nvim",
-            "nvim-treesitter/nvim-treesitter",
-        },
-    },
+  },
 }
 
 -- below is a workaround that fixes this warning:
